@@ -1,28 +1,7 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
-// function App() {
-//   const [count, setCount] = useState(0)
-
-//   return (
-//     <>
-//       <div className="home-div">
-//         <h1> Login as </h1>
-//         <div className='users'>
-//           <a> Fleet manager </a>
-//           <a> Trip manager </a>
-//           <a> Finance manager </a>
-//         </div>
-//       </div>
-//     </>
-//   )
-// }
-
-
-const ROLES = ["Fleet manager", "Trip manager", "Finance manager"];
+const ROLES = ["Fleet manager", "Driver", "Safety officer", "Financial analyst"];
 
 function Login({ onLoginSuccess }) {
   const [selectedRole, setSelectedRole] = useState(null);
@@ -73,6 +52,9 @@ function Login({ onLoginSuccess }) {
 }
 
 import FleetManagerDashboard from './Dashboard'
+import DriverDashboard from './DriverDashboard'
+import SafetyOfficerDashboard from './SafetyOfficerDashboard'
+import FinancialAnalystDashboard from './FinancialAnalystDashboard'
 
 function App() {
   const [loggedInRole, setLoggedInRole] = useState(null);
@@ -81,12 +63,22 @@ function App() {
     return <Login onLoginSuccess={(role) => setLoggedInRole(role)} />;
   }
 
+  const onBack = () => setLoggedInRole(null);
+
   if (loggedInRole === "Fleet manager") {
-    return <FleetManagerDashboard onBack={() => setLoggedInRole(null)} />;
+    return <FleetManagerDashboard onBack={onBack} />;
+  }
+  if (loggedInRole === "Driver") {
+    return <DriverDashboard onBack={onBack} />;
+  }
+  if (loggedInRole === "Safety officer") {
+    return <SafetyOfficerDashboard onBack={onBack} />;
+  }
+  if (loggedInRole === "Financial analyst") {
+    return <FinancialAnalystDashboard onBack={onBack} />;
   }
 
   return <p>Dashboard for {loggedInRole} coming soon</p>;
 }
 
 export default App
-
