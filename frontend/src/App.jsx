@@ -24,15 +24,14 @@ import './App.css'
 
 const ROLES = ["Fleet manager", "Trip manager", "Finance manager"];
 
-function Login() {
+function Login({ onLoginSuccess }) {
   const [selectedRole, setSelectedRole] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
-    // TODO: call your auth function here, e.g. mockLogin(username, password, selectedRole)
-    console.log(selectedRole, username, password);
+    onLoginSuccess(selectedRole);
   }
 
   return (
@@ -73,4 +72,21 @@ function Login() {
   );
 }
 
-export default Login
+import FleetManagerDashboard from './Dashboard'
+
+function App() {
+  const [loggedInRole, setLoggedInRole] = useState(null);
+
+  if (!loggedInRole) {
+    return <Login onLoginSuccess={(role) => setLoggedInRole(role)} />;
+  }
+
+  if (loggedInRole === "Fleet manager") {
+    return <FleetManagerDashboard onBack={() => setLoggedInRole(null)} />;
+  }
+
+  return <p>Dashboard for {loggedInRole} coming soon</p>;
+}
+
+export default App
+
