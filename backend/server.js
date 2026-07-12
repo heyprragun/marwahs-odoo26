@@ -1,30 +1,25 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-
-// Route Imports
-const tripRoutes = require('./routes/tripRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-
-dotenv.config();
-const app = express();
-
-// Global Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Core API Placements
-app.use('/api/trips', tripRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-
-// Fallback Global Error Catching Route
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something broke globally inside the server!' });
-});
-
+const app = require('./app');
+const db = require('./config/db');
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`TransitOps server securely firing on port ${PORT}`);
-});
+
+// Fail fast on misconfiguration rather than surfacing errors on first request.
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
+  console.error('FATAL: JWT_SECRET is missing or too short (min 16 chars). Set it in .env.');
+  process.exit(1);
+}
+
+const start = async () => {
+  try {
+    await db.query('SELECT 1');
+    console.log('Database connection OK');
+  } catch (err) {
+    console.error('FATAL: Cannot connect to the database:', err.message);
+    process.exit(1);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`TransitOps server running on port ${PORT}`);
+  });
+};
+
+start();
